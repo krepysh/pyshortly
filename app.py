@@ -10,7 +10,7 @@ def index():
     return redirect(url_for("create_url"))
 
 
-@app.route("/url/new", methods=["GET", "POST"])
+@app.route("/link/new", methods=["GET", "POST"])
 def create_url():
     if request.method == "POST":
         url = request.form["url"]
