@@ -64,7 +64,9 @@ class FileSystemLinkRepository(LinkRepository):
 
     def create(self, link: Link) -> Link:
         with open(os.path.join(self.path, f"{link.hash_id}.txt"), "x") as f:
-            json.dump(dataclasses.asdict(link), fp=f)
+            link_asdict = dataclasses.asdict(link)
+            link_asdict["created_at"] = link.created_at.isoformat()
+            json.dump(link_asdict, fp=f)
         return link
 
     @overload
@@ -87,14 +89,15 @@ class FileSystemLinkRepository(LinkRepository):
             return links
 
     def _read_single_link(self, hash_id):
+        hash_id = hash_id.removesuffix(".txt")
         with open(os.path.join(self.path, f"{hash_id}.txt")) as f:
             link_json = json.load(f)
             link = Link(
                 url=link_json["url"],
                 hash_id=link_json["hash_id"],
-                created_at=link_json["created_at"],
+                created_at=datetime.fromisoformat(link_json["created_at"]),
             )
         return link
 
 
-repository = InMemoryLinkRepository()
+repository = FileSystemLinkRepository(os.getcwd())
