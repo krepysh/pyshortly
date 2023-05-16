@@ -6,6 +6,7 @@ from app import app
 @pytest.fixture()
 def client():
     app.config["SECRET_KEY"] = "test_secret"
+    app.config["SERVER_NAME"] = "127.0.0.1:5000"
 
     yield app.test_client()
 

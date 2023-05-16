@@ -7,11 +7,12 @@ from services import create_short_url
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+app.config["SERVER_NAME"] = os.environ.get("SERVER_NAME")
 
 
 @app.route("/")
 def index():
-    return redirect(url_for("create_url"))
+    return redirect(url_for("create_url", _external=True))
 
 
 @app.route("/link/new", methods=["GET", "POST"])
@@ -28,6 +29,12 @@ def create_url():
 def link_list():
     links = repository.get()
     return render_template("link_list.html", links=links)
+
+
+@app.route("/<hash_id>")
+def redirector(hash_id):
+    link = repository.get(hash_id=hash_id)
+    return redirect(link.url)
 
 
 if __name__ == "__main__":
