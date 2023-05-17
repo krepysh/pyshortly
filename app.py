@@ -28,6 +28,7 @@ def create_url():
 @app.route("/link/list")
 def link_list():
     links = repository.get()
+    links.sort(key=lambda x: x.created_at, reverse=True)
     return render_template("link_list.html", links=links)
 
 
