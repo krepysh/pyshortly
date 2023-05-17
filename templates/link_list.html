@@ -3,15 +3,6 @@
 {% block title %}All links{% endblock %}
 
 {% block content %}
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
 <table border="1">
     <tr>
         <th>Full URL</th>
