@@ -14,6 +14,19 @@ class Link:
     hash_id: str
     created_at: datetime
 
+    def to_dict(self):
+        asdict = dataclasses.asdict(self)
+        asdict["created_at"] = self.created_at.isoformat()
+        return asdict
+
+    @classmethod
+    def from_dict(cls, link_as_dict):
+        return cls(
+            url=link_as_dict["url"],
+            hash_id=link_as_dict["hash_id"],
+            created_at=datetime.fromisoformat(link_as_dict["created_at"]),
+        )
+
 
 class LinkRepository(ABC):
     @overload
@@ -64,9 +77,7 @@ class FileSystemLinkRepository(LinkRepository):
 
     def create(self, link: Link) -> Link:
         with open(os.path.join(self.path, f"{link.hash_id}.txt"), "x") as f:
-            link_asdict = dataclasses.asdict(link)
-            link_asdict["created_at"] = link.created_at.isoformat()
-            json.dump(link_asdict, fp=f)
+            json.dump(link.to_dict(), fp=f)
         return link
 
     @overload
@@ -89,14 +100,9 @@ class FileSystemLinkRepository(LinkRepository):
             return links
 
     def _read_single_link(self, hash_id):
-        hash_id = hash_id.removesuffix(".txt")
         with open(os.path.join(self.path, f"{hash_id}.txt")) as f:
             link_json = json.load(f)
-            link = Link(
-                url=link_json["url"],
-                hash_id=link_json["hash_id"],
-                created_at=datetime.fromisoformat(link_json["created_at"]),
-            )
+            link = Link.from_dict(link_json)
         return link
 
 
