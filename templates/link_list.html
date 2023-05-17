@@ -3,13 +3,13 @@
 {% block title %}All links{% endblock %}
 
 {% block content %}
-<table border="1">
-    <tr>
+<table class="table table-bordered">
+    <thead class="table-primary">
         <th>Full URL</th>
         <th>Shorten</th>
         <th>Opened times</th>
         <th>Created at</th>
-    </tr>
+    </thead>
     {% for link in links %}
     <tr>
         <td>{{ link.url }}</td>

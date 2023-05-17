@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Create a new url{% endblock %}
 {% block content %}
-<div class="row">
+    <h3>New short url</h3>
     <p>Here you can create a new short url.</p>
     <form action="{{ url_for("create_url") }}" method="post">
-        <label for="url">Required. Full url:</label>
-        <input type="text" name="url" id="url">
-        <input type="submit" value="Create">
+        <div class="mb-4">
+            <label for="url" class="form-label">Required. Full url:</label>
+            <input type="text" name="url" id="url" class="form-control">
+        </div>
+        <div class="col-sm-12">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
     </form>
-</div>
 {% endblock %}
