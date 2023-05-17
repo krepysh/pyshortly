@@ -34,6 +34,7 @@ def link_list():
 @app.route("/<hash_id>")
 def redirector(hash_id):
     link = repository.get(hash_id=hash_id)
+    repository.update(link)
     return redirect(link.url)
 
 

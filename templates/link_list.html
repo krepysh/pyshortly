@@ -17,12 +17,14 @@
             <tr>
                 <th>Full URL</th>
                 <th>Shorten</th>
+                <th>Opened times</th>
                 <th>Created at</th>
             </tr>
             {% for link in links %}
             <tr>
                 <td>{{ link.url }}</td>
                 <td><a href="{{ url_for('redirector', hash_id=link.hash_id, _external=True) }}">{{ link.hash_id }}</a></td>
+                <td>{{ link.views }}</td>
                 <td>{{ link.created_at }}</td>
             </tr>
             {% endfor %}

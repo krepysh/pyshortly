@@ -13,6 +13,7 @@ class Link:
     url: str
     hash_id: str
     created_at: datetime
+    views: int = 0
 
     def to_dict(self):
         asdict = dataclasses.asdict(self)
@@ -25,6 +26,7 @@ class Link:
             url=link_as_dict["url"],
             hash_id=link_as_dict["hash_id"],
             created_at=datetime.fromisoformat(link_as_dict["created_at"]),
+            views=link_as_dict.get("views", 0),
         )
 
 
@@ -68,6 +70,11 @@ class InMemoryLinkRepository(LinkRepository):
         self._links[link.hash_id] = link
         return link
 
+    def update(self, link, add_views: int = 1) -> Link:
+        link.views += add_views
+        self._links[link.hash_id] = link
+        return link
+
 
 class FileSystemLinkRepository(LinkRepository):
     def __init__(self, path: Union[str, Path]):
@@ -103,6 +110,12 @@ class FileSystemLinkRepository(LinkRepository):
         with open(os.path.join(self.path, f"{hash_id}.txt")) as f:
             link_json = json.load(f)
             link = Link.from_dict(link_json)
+        return link
+
+    def update(self, link, add_views: int = 1):
+        link.views += add_views
+        with open(os.path.join(self.path, f"{link.hash_id}.txt"), "w") as f:
+            json.dump(link.to_dict(), fp=f)
         return link
 
 

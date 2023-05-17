@@ -33,6 +33,14 @@ def test_get_single_link(repository_in_mem):
     assert created_link == retrieved_link
 
 
+def test_update(repository_in_mem):
+    link = Link(url="test_url", hash_id="abc", created_at=datetime.utcnow())
+    repository_in_mem.create(link)
+    updated_link = repository_in_mem.update(link, add_views=5)
+
+    assert updated_link.views == 5
+
+
 def test_get_not_exist_hash(repository_in_mem):
     assert True
 
@@ -59,3 +67,11 @@ def test_link_with_datetime_fs(fs_repository):
 
     gotten_link = fs_repository.get("abc")
     assert isinstance(gotten_link.created_at, datetime)
+
+
+def test_update_in_fs(fs_repository):
+    link = Link(url="test_url", hash_id="abc", created_at=datetime.utcnow())
+    fs_repository.create(link)
+    updated_link = fs_repository.update(link, add_views=5)
+
+    assert updated_link.views == 5
