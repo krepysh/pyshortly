@@ -1,34 +1,32 @@
-<html>
-    <head>
-        <title>All links</title>
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    </head>
-    <body>
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        <table border="1">
-            <tr>
-                <th>Full URL</th>
-                <th>Shorten</th>
-                <th>Opened times</th>
-                <th>Created at</th>
-            </tr>
-            {% for link in links %}
-            <tr>
-                <td>{{ link.url }}</td>
-                <td><a href="{{ url_for('redirector', hash_id=link.hash_id, _external=True) }}">{{ link.hash_id }}</a></td>
-                <td>{{ link.views }}</td>
-                <td>{{ link.created_at }}</td>
-            </tr>
-            {% endfor %}
+{% extends "base.html" %}
 
-        </table>
-    </body>
-</html>
+{% block title %}All links{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+<table border="1">
+    <tr>
+        <th>Full URL</th>
+        <th>Shorten</th>
+        <th>Opened times</th>
+        <th>Created at</th>
+    </tr>
+    {% for link in links %}
+    <tr>
+        <td>{{ link.url }}</td>
+        <td><a href="{{ url_for('redirector', hash_id=link.hash_id, _external=True) }}">{{ link.hash_id }}</a></td>
+        <td>{{ link.views }}</td>
+        <td>{{ link.created_at }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+{% endblock %}
