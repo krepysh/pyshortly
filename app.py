@@ -1,6 +1,9 @@
 import os
 
 from flask import Flask, url_for, redirect, render_template, request, flash
+from flask_login import LoginManager, login_user, current_user, logout_user
+from sqlalchemy import select
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from models import db, User
 from repository import repository
@@ -15,6 +18,15 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
 db.init_app(app)
 with app.app_context():
     db.create_all()
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_name) -> User:
+    stmt = select(User).where(User.username == user_name)
+    user = db.session.scalar(stmt)
+    return user
 
 
 @app.route("/")
@@ -48,14 +60,37 @@ def redirector(hash_id):
 
 @app.route("/register", methods=("GET", "POST"))
 def register():
+    if current_user:
+        return redirect(url_for("index"))
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        user = User(username=username, password=password)
+        user = User(username=username, password=generate_password_hash(password))
         db.session.add(user)
         db.session.commit()
         return redirect(url_for("index"))
     return render_template("register.html")
+
+
+@app.route("/login", methods=("GET", "POST"))
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        user = load_user(username)
+        if user and check_password_hash(user.password, password):
+            flash("You successfully logged-in")
+            login_user(user)
+            return redirect(url_for("index"))
+        flash("Wrong credentials")
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    flash("You logged out.")
+    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":

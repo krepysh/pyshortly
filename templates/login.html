@@ -1,21 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Registration page{% endblock %}
-
+{% block title %}Login page{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-4 mx-auto">
-            <form action="{{ url_for('register') }}" method="POST">
+        <div class="col-md-4">
+            <form action="{{ url_for("login") }}" method="POST">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" name="username">
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password">
+                    <input type="text" class="form-control" id="password" name="password">
                 </div>
-                <div class="mb-3">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
             </form>
         </div>
     </div>
