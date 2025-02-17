@@ -60,7 +60,7 @@ def redirector(hash_id):
 
 @app.route("/register", methods=("GET", "POST"))
 def register():
-    if current_user:
+    if current_user.is_authenticated:
         return redirect(url_for("index"))
     if request.method == "POST":
         username = request.form.get("username")
