@@ -1,3 +1,1 @@
-web: gunicorn -b :$PORT app:app
-release: flask db upgrade
-build: flask db upgrade
+web: flask db upgrade && echo "Migrations applied!!!" && gunicorn -b :$PORT app:app
