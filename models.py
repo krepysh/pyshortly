@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String
@@ -11,6 +12,7 @@ class User(db.Model):
     id = Column(Integer, primary_key=True)
     username = Column(String, unique=True)
     password = Column(String)
+    last_login: Mapped[Optional[datetime]] = mapped_column()
 
     @property
     def is_active(self):

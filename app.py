@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from flask import Flask, url_for, redirect, render_template, request, flash
 from flask_login import LoginManager, login_user, current_user, logout_user
@@ -80,8 +81,18 @@ def login():
         password = request.form.get("password")
         user = load_user(username)
         if user and check_password_hash(user.password, password):
-            flash("You successfully logged-in")
+            previous_login = (
+                user.last_login.strftime("%Y-%m-%d %H:%M:%S")
+                if user.last_login
+                else "Never"
+            )
+            flash(
+                f"You successfully logged-in. Your last login was on: {previous_login}"
+            )
             login_user(user)
+            user.last_login = datetime.utcnow()
+            db.session.add(user)
+            db.session.commit()
             return redirect(url_for("index"))
         flash("Wrong credentials")
     return render_template("login.html")
