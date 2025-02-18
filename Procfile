@@ -1,2 +1,3 @@
 release: flask db upgrade
-web: gunicorn app:app
+build: flask db migrate
+web: gunicorn -b :$PORT app:app
