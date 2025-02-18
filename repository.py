@@ -7,6 +7,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional, Dict, Union, overload, List
 
+from flask_sqlalchemy import SQLAlchemy
+
+from models import Url, db
+
 
 @dataclass
 class Link:
@@ -119,4 +123,33 @@ class FileSystemLinkRepository(LinkRepository):
         return link
 
 
-repository = FileSystemLinkRepository(os.getcwd())
+class SQLAlchemyRepository(LinkRepository):
+    def __init__(self, db: SQLAlchemy):
+        self.db = db
+
+    def create(self, link: Link) -> Link:
+        new_link = Url(
+            url=link.url,
+            hash_id=link.hash_id,
+            created_at=link.created_at,
+            views=link.views,
+        )
+        self.db.session.add(new_link)
+        self.db.session.commit()
+        return new_link
+
+    def get(self, hash_id: Optional[str] = None) -> Union[List[Link], Link]:
+        if hash_id is None:
+            return list(Url.query.limit(20).all())
+        link = Url.query.filter_by(hash_id=hash_id).one_or_404()
+        return link
+
+    def update(self, link: Link, add_views: int = 1) -> Link:
+        link = Url.query.filter_by(hash_id=link.hash_id).one_or_404()
+        link.views += add_views
+        self.db.session.commit()
+        return link
+
+
+# repository = FileSystemLinkRepository(os.getcwd())
+repository = SQLAlchemyRepository(db)
