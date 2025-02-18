@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, url_for, redirect, render_template, request, flash
 from flask_login import LoginManager, login_user, current_user, logout_user
+from flask_migrate import Migrate
 from sqlalchemy import select
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -16,8 +17,8 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URL", "sqlite:///db.sqlite"
 )
 db.init_app(app)
-with app.app_context():
-    db.create_all()
+migrate = Migrate(app=app, db=db)
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 
